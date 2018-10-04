@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Draggable - Events</title>
+  
+  <style>
+  .container {
+    background-color: #8ED6FF;
+    border: 2px solid blue;
+    position: absolute;
+  }
+  .draggable { width: 100px; height: 100px; padding: 0; background-color: green; border-radius: 5px;}
+
+  </style>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  
+  var size = 100;
+  var padding = 10;
+  function drawContainer(objects){
+    var min_top=10000; max_top = 0;
+    var min_left=10000; max_left = 0;
+    for (var i =0; i < objects.length; i++) {         //get the rectangle coordinate from all rectangle
+      if(objects[i].top < min_top) min_top = objects[i].top;
+      if(objects[i].top+objects[i].height > max_top) max_top = objects[i].top+objects[i].height;
+      if(objects[i].left < min_left) min_left = objects[i].left;
+      if(objects[i].left+objects[i].width > max_left) max_left = objects[i].left+objects[i].width;
+    }
+    
+    $(".container").css({"top": min_top-padding, "left": min_left-padding, "width": max_left-min_left+padding*2, "height":max_top-min_top+padding*2})
+    //console.log(objects)
+  }
+
+  $(document).ready(function(){
+    var div="";
+    var objects = [
+      {"top":30, "left":30, "width":100, "height": 100}, 
+      {"top":30, "left":300, "width":100, "height": 100}, 
+      {"top":300, "left":30, "width":50, "height": 100}, 
+      {"top":300, "left":300, "width":100, "height": 200},
+      {"top":150, "left":150, "width":300, "height": 100}];
+  
+    objects.map((object, index) => {. //initial
+      div +='<div class="draggable" data-index="'+index+'" style="position: absolute; top: '+object.top+'px; left: '+object.left+'px; width: '+object.width+'px; height: '+object.height+'px;"></div>'
+    })
+
+    $("body").append(div);
+    drawContainer(objects);
+    $( function() { 
+      $( ".draggable" ).draggable({
+        drag: function() {
+          var offset = $(this).offset();
+          var i = $(this).data("index");
+          objects[i].top = offset.top;
+          objects[i].left = offset.left;
+          drawContainer(objects);    //draw
+        }
+      });
+    })
+  });
+  </script>
+</head>
+<body>
+<div class="container">    
+ </div>
+ 
+</body>
+</html>
